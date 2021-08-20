@@ -3,7 +3,6 @@ package api
 import (
 	"context"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"os/signal"
@@ -73,11 +72,11 @@ func run() (err error) {
 		// 服务连接
 		if viper.GetBool("ssl.enable") {
 			if err := srv.ListenAndServeTLS(viper.GetString("ssl.pem"), viper.GetString("ssl.key")); err != nil && err != http.ErrServerClosed {
-				log.Fatal("listen: ", err)
+				logger.Fatal("listen: ", err)
 			}
 		} else {
 			if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
-				log.Fatal("listen: ", err)
+				logger.Fatal("listen: ", err)
 			}
 		}
 	}()
@@ -94,9 +93,9 @@ func run() (err error) {
 	fmt.Printf("%s Shutdown Server ... \r\n", time.Now().Format("2006-01-02 15:04:05"))
 
 	if err := srv.Shutdown(ctx); err != nil {
-		log.Fatal("Server Shutdown:", err)
+		logger.Fatal("Server Shutdown:", err)
 	}
-	log.Println("Server exiting")
+	logger.Info("Server exiting")
 
 	return nil
 }
