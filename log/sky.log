@@ -1,9 +1,0 @@
-2021-08-21T01:32:52.837+0800	INFO	logger/logger.go:77	lanyulei
-2021-08-21 01:33:56.531088	info	logger/logger.go:78	lanyulei
-2021-08-21 01:34:33.448	info	logger/logger.go:78	lanyulei
-2021-08-21 01:35:03.573	INFO	logger/logger.go:78	lanyulei
-{"L":"INFO","T":"2021-08-21 01:37:24.625","C":"logger/logger.go:81","M":"lanyulei"}
-2021-08-21 01:40:42.934	info	logger/logger.go:82	lanyulei
-2021-08-21 01:43:21.256	info	lanyulei
-2021-08-21 01:43:51.110	info	api/server.go:91	lanyulei
-2021-08-21 01:44:35.436	info	api/server.go:91	lanyulei
