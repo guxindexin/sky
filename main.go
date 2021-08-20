@@ -1,6 +1,6 @@
 package main
 
-import "lflow/cmd"
+import "sky/cmd"
 
 func main() {
 	cmd.Execute()

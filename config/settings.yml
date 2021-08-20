@@ -1,1 +1,21 @@
-username: lanyulei
+server:
+  host: localhost
+  post: 8000
+  mode: dev
+ssl:
+  # https对应的域名
+  domain: localhost:8000
+  # https开关
+  enable: false
+  # ssl 证书key
+  key: keystring
+  # ssl 证书路径
+  pem: temp/pem.pem
+log:
+  level: debug
+  maxsize: 1024
+  maxage: 30
+  maxbackups: 10
+  localtime: 1
+  compress: 1
+  path: log/sky.log
