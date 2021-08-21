@@ -3,10 +3,12 @@ package api
 import (
 	"context"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"os"
 	"os/signal"
 	"sky/common/config"
+	"sky/common/conn"
 	"sky/common/logger"
 	"sky/common/router"
 	"sky/common/tools"
@@ -49,16 +51,18 @@ func setup() {
 	logger.Setup()
 
 	// 数据库配置
+	conn.Setup()
 }
 
 func run() (err error) {
 	if viper.GetString("server.mode") == config.ModeProd.String() {
 		gin.SetMode(gin.ReleaseMode)
+		gin.DefaultWriter = ioutil.Discard
 	}
 
 	// 路由引擎实例
 	r := gin.Default()
-	router.Load(r)
+	router.Setup(r)
 
 	srv := &http.Server{
 		Addr:    fmt.Sprintf("%s:%d", viper.GetString("server.host"), viper.GetInt("server.post")),
@@ -81,10 +85,10 @@ func run() (err error) {
 		}
 	}()
 
-	fmt.Println("Server run at:")
+	fmt.Println("\nServer run at:")
 	fmt.Printf("-  Local:   http://localhost:%d/ \r\n", viper.GetInt("server.post"))
 	fmt.Printf("-  Network: http://%s:%d/ \r\n", tools.GetLocaHonst(), viper.GetInt("server.post"))
-	fmt.Printf("%s Enter Control + C Shutdown Server \r\n", time.Now().Format("2006-01-02 15:04:05.000"))
+	fmt.Printf("%s Enter Control + C Shutdown Server \r\n\n", time.Now().Format("2006-01-02 15:04:05.000"))
 	// 等待中断信号以优雅地关闭服务器（设置 5 秒的超时时间）
 
 	quit := make(chan os.Signal)

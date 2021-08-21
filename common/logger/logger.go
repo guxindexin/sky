@@ -2,8 +2,15 @@ package logger
 
 import (
 	"fmt"
+	"net"
+	"net/http"
+	"net/http/httputil"
 	"os"
+	"runtime/debug"
+	"strings"
 	"time"
+
+	"github.com/gin-gonic/gin"
 
 	"github.com/spf13/viper"
 	"go.uber.org/zap"
@@ -26,10 +33,12 @@ var (
 
 func Setup() {
 	var (
-		allCore    []zapcore.Core
-		basePath   string
-		level      zapcore.Level
-		fileWriter zapcore.WriteSyncer
+		allCore          []zapcore.Core
+		basePath         string
+		level            zapcore.Level
+		fileWriter       zapcore.WriteSyncer
+		consoleDebugging zapcore.WriteSyncer
+		logger           *zap.Logger
 	)
 	basePath, _ = os.Getwd()
 	level = getLoggerLevel(viper.GetString(`log.level`))
@@ -42,7 +51,7 @@ func Setup() {
 		Compress:  viper.GetBool(`log.compress`),  // 是否压缩文件，使用gzip
 	})
 
-	consoleDebugging := zapcore.Lock(os.Stdout)
+	consoleDebugging = zapcore.Lock(os.Stdout)
 
 	encoder := zap.NewProductionEncoderConfig()
 	encoder.EncodeTime = func(t time.Time, enc zapcore.PrimitiveArrayEncoder) {
@@ -58,7 +67,7 @@ func Setup() {
 
 	core := zapcore.NewTee(allCore...)
 
-	logger := zap.New(core).WithOptions(zap.AddCaller(), zap.AddCallerSkip(1))
+	logger = zap.New(core).WithOptions(zap.AddCaller(), zap.AddCallerSkip(1))
 	log = logger.Sugar()
 }
 
@@ -67,6 +76,62 @@ func getLoggerLevel(l string) zapcore.Level {
 		return level
 	}
 	return zapcore.InfoLevel
+}
+
+// GinLogger 接收gin框架默认的日志
+func GinLogger() gin.HandlerFunc {
+	return func(c *gin.Context) {
+		start := time.Now()
+		path := c.Request.URL.Path
+		query := c.Request.URL.RawQuery
+		c.Next()
+
+		cost := time.Since(start)
+		Info(fmt.Sprintf("%s    %d    %s    %s    %s    %s    %s    %v",
+			path,
+			c.Writer.Status(),
+			c.Request.Method,
+			query,
+			c.ClientIP(),
+			c.Request.UserAgent(),
+			c.Errors.ByType(gin.ErrorTypePrivate).String(),
+			cost),
+		)
+	}
+}
+
+// GinRecovery recover掉项目可能出现的panic，并使用zap记录相关日志
+func GinRecovery(stack bool) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		defer func() {
+			if err := recover(); err != nil {
+				var brokenPipe bool
+				if ne, ok := err.(*net.OpError); ok {
+					if se, ok := ne.Err.(*os.SyscallError); ok {
+						if strings.Contains(strings.ToLower(se.Error()), "broken pipe") || strings.Contains(strings.ToLower(se.Error()), "connection reset by peer") {
+							brokenPipe = true
+						}
+					}
+				}
+
+				httpRequest, _ := httputil.DumpRequest(c.Request, false)
+				if brokenPipe {
+					Error(fmt.Sprintf("%s    %v    %s", c.Request.URL.Path, err, string(httpRequest)))
+					_ = c.Error(err.(error))
+					c.Abort()
+					return
+				}
+
+				if stack {
+					Error(fmt.Sprintf("[Recovery from panic]    %v    %s    %s", err, string(httpRequest), string(debug.Stack())))
+				} else {
+					Error(fmt.Sprintf("[Recovery from panic]    %v    %s", err, string(httpRequest)))
+				}
+				c.AbortWithStatus(http.StatusInternalServerError)
+			}
+		}()
+		c.Next()
+	}
 }
 
 func Debug(args ...interface{}) {

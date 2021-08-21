@@ -3,13 +3,9 @@ server:
   post: 8000
   mode: dev
 ssl:
-  # https对应的域名
   domain: localhost:8000
-  # https开关
   enable: false
-  # ssl 证书key
   key: keystring
-  # ssl 证书路径
   pem: temp/pem.pem
 log:
   level: debug
@@ -19,3 +15,8 @@ log:
   localtime: 1
   compress: 1
   path: log/sky.log
+db:
+  dsn: host=localhost user=postgres password=123456 dbname=sky port=5432 sslmode=disable TimeZone=Asia/Shanghai
+  maxOpenConn: 20000
+  maxIdleConn: 0
+  connMaxLifetime: 60
