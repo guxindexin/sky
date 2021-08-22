@@ -2,7 +2,7 @@ package conn
 
 import (
 	"database/sql"
-	"sky/common/logger"
+	"sky/pkg/logger"
 	"time"
 
 	_ "github.com/lib/pq"
@@ -31,7 +31,8 @@ func Setup() {
 	}
 
 	Orm, err = gorm.Open(postgres.New(postgres.Config{
-		Conn: sqlDB,
+		Conn:                 sqlDB,
+		PreferSimpleProtocol: true,
 	}), &gorm.Config{})
 
 	// SetMaxIdleConns 设置空闲连接池中连接的最大数量

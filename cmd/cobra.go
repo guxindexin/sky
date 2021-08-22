@@ -3,8 +3,9 @@ package cmd
 import (
 	"errors"
 	"fmt"
-	"sky/cmd/api"
 	"os"
+	"sky/cmd/api"
+	"sky/cmd/migrate"
 
 	"github.com/spf13/cobra"
 )
@@ -29,6 +30,7 @@ var rootCmd = &cobra.Command{
 
 func init() {
 	rootCmd.AddCommand(api.StartCmd)
+	rootCmd.AddCommand(migrate.StartCmd)
 }
 
 func tip() {

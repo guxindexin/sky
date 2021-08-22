@@ -1,7 +1,7 @@
 package apis
 
 import (
-	"sky/common/tools/app"
+	"sky/pkg/tools/app"
 
 	"github.com/gin-gonic/gin"
 )

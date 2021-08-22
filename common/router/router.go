@@ -2,7 +2,7 @@ package router
 
 import (
 	"net/http"
-	"sky/common/logger"
+	"sky/pkg/logger"
 	"time"
 
 	"github.com/gin-contrib/cors"
