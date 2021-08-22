@@ -24,3 +24,8 @@ jwt:
   timeout: 60
   secret: 7c61aa49bd124736917207eb960cede9
   issuer: sky
+casbin:
+  rbacModel: config/rbac_model.conf
+  tableName: system_casbin_rule
+  isTiming: false
+  intervalTime: 60

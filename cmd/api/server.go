@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"sky/common/middleware/permission"
 	"sky/common/router"
 	"sky/pkg/config"
 	"sky/pkg/conn"
@@ -52,6 +53,9 @@ func setup() {
 
 	// 数据库配置
 	conn.Setup()
+
+	// casbin 权限配置
+	permission.CasbinSetup()
 }
 
 func run() (err error) {

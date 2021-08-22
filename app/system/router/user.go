@@ -1,7 +1,6 @@
 package router
 
 import (
-	"fmt"
 	"sky/app/system/apis"
 
 	"github.com/gin-gonic/gin"
@@ -12,9 +11,9 @@ import (
 */
 
 func UserRouter(g *gin.RouterGroup) {
-	group := fmt.Sprintf("%s", "/user")
-	router := g.Group(group)
+	router := g.Group("/user")
 	{
 		router.GET("", apis.UserList)
+		router.POST("", apis.CreateUser)
 	}
 }

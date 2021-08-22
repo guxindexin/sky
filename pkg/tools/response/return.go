@@ -28,7 +28,7 @@ func OK(c *gin.Context, data interface{}, msg string) {
 	var res = Response{
 		Code:    Success.Code,
 		Data:    data,
-		Message: "",
+		Message: Success.Message,
 	}
 	if msg != "" {
 		res.Message = msg
