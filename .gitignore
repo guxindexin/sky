@@ -117,4 +117,7 @@ Temporary Items
 # vendor/
 
 log/
+tmp/
+.idea/
+config/settings.dev.yml
 
