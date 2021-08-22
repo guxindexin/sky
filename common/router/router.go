@@ -37,6 +37,9 @@ func Setup(g *gin.Engine) {
 	// 路由版本
 	routerVersion := g.Group("/api/v1")
 
+	// 注册公共接口路由，非业务相关路由
+	registerPublicRouter(routerVersion)
+
 	// 注册系统管理路由
 	registerSystemRouter(routerVersion)
 }

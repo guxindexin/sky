@@ -1,11 +1,11 @@
 package apis
 
 import (
-	"sky/pkg/tools/app"
+	"sky/pkg/tools/response"
 
 	"github.com/gin-gonic/gin"
 )
 
 func UserList(c *gin.Context) {
-	app.OK(c, "", "ok")
+	response.OK(c, "", "ok")
 }
