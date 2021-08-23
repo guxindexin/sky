@@ -38,6 +38,7 @@ func CasbinSetup() *casbin.SyncedEnforcer {
 
 	// 定时同步策略
 	if viper.GetBool("casbin.isTiming") {
+		// 间隔多长时间同步一次权限策略，单位：秒
 		Enforcer.StartAutoLoadPolicy(time.Second * time.Duration(viper.GetInt("casbin.intervalTime")))
 	}
 

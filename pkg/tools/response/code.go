@@ -6,7 +6,7 @@ var (
 	AuthorizationNullError   = &Response{Code: 30001, Message: "请求头中 Authorization 为空"}
 	AuthorizationFormatError = &Response{Code: 30002, Message: "请求头中 Authorization 格式有误"}
 	InvalidTokenError        = &Response{Code: 30003, Message: "Token 无效"}
-	NoPermissionError        = &Response{Code: 30004, Message: "暂无访问权限"}
+	NoPermissionError        = &Response{Code: 30004, Message: "暂无请求权限"}
 
 	InvalidParameterError  = &Response{Code: 40001, Message: "无效参数"}
 	QueryUserError         = &Response{Code: 40002, Message: "查询用户失败"}

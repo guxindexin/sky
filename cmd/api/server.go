@@ -54,7 +54,7 @@ func setup() {
 	// 数据库配置
 	conn.Setup()
 
-	// casbin 权限配置
+	// 加载权限配置
 	permission.CasbinSetup()
 }
 
