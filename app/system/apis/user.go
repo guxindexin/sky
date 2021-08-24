@@ -11,7 +11,22 @@ import (
 )
 
 func UserList(c *gin.Context) {
-	response.OK(c, "", "ok")
+	response.OK(c, "", "")
+}
+
+func UserInfo(c *gin.Context) {
+	var (
+		err  error
+		user models.User
+	)
+
+	err = conn.Orm.Model(&models.User{}).Where("username = ?", c.GetString("username")).Find(&user).Error
+	if err != nil {
+		response.Error(c, err, response.GetUserInfoError)
+		return
+	}
+
+	response.OK(c, user, "")
 }
 
 func CreateUser(c *gin.Context) {

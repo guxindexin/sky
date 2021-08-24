@@ -15,5 +15,6 @@ var (
 	IncorrectPasswordError = &Response{Code: 40005, Message: "密码不正确"}
 	GenerateTokenError     = &Response{Code: 40006, Message: "生成 Token 失败"}
 	CreateUserError        = &Response{Code: 40007, Message: "创建用户失败"}
-	EncryptPasswordError   = &Response{Code: 40007, Message: "加密密码失败"}
+	EncryptPasswordError   = &Response{Code: 40008, Message: "加密密码失败"}
+	GetUserInfoError       = &Response{Code: 40009, Message: "获取用户详情失败"}
 )

@@ -14,6 +14,7 @@ func UserRouter(g *gin.RouterGroup) {
 	router := g.Group("/user")
 	{
 		router.GET("", apis.UserList)
+		router.GET("/info", apis.UserInfo)
 		router.POST("", apis.CreateUser)
 	}
 }

@@ -4,6 +4,6 @@ var SystemModels = []interface{}{
 	&User{},
 	&Role{},
 	&Dept{},
-	&Permission{},
-	&RolePermission{},
+	&Menu{},
+	&RoleMenu{},
 }
