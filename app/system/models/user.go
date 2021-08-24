@@ -6,7 +6,7 @@ import (
 
 type User struct {
 	Username string `gorm:"column:username;type:varchar(100);comment:用户名" json:"username"`
-	Password string `gorm:"column:password;type:varchar(100);comment:密码" json:"-"`
+	Password string `gorm:"column:password;type:varchar(100);comment:密码" json:"password"`
 	Nickname string `gorm:"column:nickname;type:varchar(100);comment:姓名" json:"nickname"`
 	Tel      string `gorm:"column:tel;type:varchar(100);comment:手机号" json:"tel"`
 	Email    string `gorm:"column:email;type:varchar(100);comment:邮箱" json:"email"`

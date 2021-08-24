@@ -14,13 +14,13 @@ type Response struct {
 }
 
 // Error 失败数据处理
-func Error(c *gin.Context, err error, response *Response) {
+func Error(c *gin.Context, err error, response Response) {
 	if err != nil && response.Message != "" {
-		response.Message = fmt.Sprintf("%s, error: %s", response.Message, err.Error())
+		response.Message = fmt.Sprintf("%s, 错误: %s", response.Message, err.Error())
 	} else if err != nil {
 		response.Message = err.Error()
 	}
-	c.AbortWithStatusJSON(http.StatusOK, *response)
+	c.AbortWithStatusJSON(http.StatusOK, response)
 }
 
 // OK 通常成功数据处理

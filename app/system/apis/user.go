@@ -17,7 +17,10 @@ func UserList(c *gin.Context) {
 func UserInfo(c *gin.Context) {
 	var (
 		err  error
-		user models.User
+		user struct {
+			models.User
+			Password string `json:"-"`
+		}
 	)
 
 	err = conn.Orm.Model(&models.User{}).Where("username = ?", c.GetString("username")).Find(&user).Error
