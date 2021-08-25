@@ -17,4 +17,6 @@ var (
 	CreateUserError        = Response{Code: 40007, Message: "创建用户失败"}
 	EncryptPasswordError   = Response{Code: 40008, Message: "加密密码失败"}
 	GetUserInfoError       = Response{Code: 40009, Message: "获取用户详情失败"}
+
+	GetMenuError = Response{Code: 400010, Message: "查询菜单数据失败"}
 )

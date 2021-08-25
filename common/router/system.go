@@ -12,4 +12,5 @@ func registerSystemRouter(g *gin.RouterGroup) {
 	group := g.Group("/system", auth.JWTAuthMiddleware())
 
 	router.UserRouter(group) // 用户管理
+	router.MenuRouter(group) // 菜单管理
 }

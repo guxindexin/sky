@@ -6,4 +6,6 @@ var SystemModels = []interface{}{
 	&Dept{},
 	&Menu{},
 	&RoleMenu{},
+	&Api{},
+	&MenuApi{},
 }

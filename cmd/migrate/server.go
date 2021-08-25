@@ -46,9 +46,7 @@ func setup() {
 
 func run() (err error) {
 	// 同步数据结构
-	logger.Info("开始同步数据结构...")
 	AutoMigrate()
-	logger.Info("数据结构同步完成")
 
 	// 同步初始数据
 	return
