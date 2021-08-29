@@ -47,7 +47,7 @@ func SaveMenu(c *gin.Context) {
 		return
 	}
 
-	db := conn.Orm.Debug().Model(&models.Menu{})
+	db := conn.Orm.Model(&models.Menu{})
 
 	if menu.Id != 0 {
 		db = db.Where("id = ?", menu.Id)
