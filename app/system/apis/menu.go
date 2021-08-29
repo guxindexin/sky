@@ -31,10 +31,6 @@ func MenuTree(c *gin.Context) {
 	response.OK(c, result, "")
 }
 
-func CreateMenu(c *gin.Context) {
-	response.OK(c, "", "")
-}
-
 func SaveMenu(c *gin.Context) {
 	var (
 		err  error
