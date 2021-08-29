@@ -10,8 +10,9 @@ type Menu struct {
 	Path        string         `gorm:"column:path;type:varchar(200);comment:路径" json:"path"`
 	Name        string         `gorm:"column:name;type:varchar(100);comment:路由名称" json:"name"`
 	Component   string         `gorm:"column:component;type:varchar(200);comment:组件路径" json:"component"`
+	Redirect    string         `gorm:"column:redirect;type:varchar(200);comment:跳转地址" json:"redirect"`
 	Title       string         `gorm:"column:title;type:varchar(200);comment:标题" json:"title"`
-	IsLink      string         `gorm:"column:is_link;type:varchar(200);comment:是否超链接" json:"isLink"`
+	Hyperlink   string         `gorm:"column:hyperlink;type:varchar(200);comment:是否超链接" json:"hyperlink"`
 	IsHide      bool           `gorm:"column:is_hide;type:boolean;comment:是否隐藏" json:"isHide"`
 	IsKeepAlive bool           `gorm:"column:is_keep_alive;type:boolean;comment:是否缓存组件状态" json:"isKeepAlive"`
 	IsAffix     bool           `gorm:"column:is_affix;type:boolean;comment:是否固定在 tagsView 栏上" json:"isAffix"`
@@ -20,18 +21,22 @@ type Menu struct {
 	Icon        string         `gorm:"column:icon;type:varchar(200);comment:图标" json:"icon"`
 	Parent      int            `gorm:"column:parent;type:integer;comment:父级" json:"parent"`
 	Type        int            `gorm:"column:type;type:smallint;comment:类型" json:"type"` // 1 菜单，2 按钮
+	Sort        int            `gorm:"column:sort;type:smallint;comment:顺序" json:"sort"`
 	models.BaseModel
 }
 
 type MenuValue struct {
-	Id        int    `json:"-"`
+	Id        int    `json:"id"`
+	Title     string `json:"title"`
 	Path      string `json:"path"`
 	Name      string `json:"name"`
 	Component string `json:"component"`
-	Parent    int    `json:"-"`
+	Parent    int    `json:"parent"`
+	Type      int    `json:"type"`
+	Sort      int    `json:"sort"`
 	Meta      struct {
 		Title       string   `json:"title"`
-		IsLink      string   `json:"isLink"`
+		Hyperlink   string   `json:"hyperlink"`
 		IsHide      bool     `json:"isHide"`
 		IsKeepAlive bool     `json:"isKeepAlive"`
 		IsAffix     bool     `json:"isAffix"`
@@ -83,13 +88,16 @@ func (m *MenuTree) GetMenuTree() []*MenuValue {
 	for _, menu := range m.Menus {
 		menuValue := &MenuValue{
 			Id:        menu.Id,
+			Title:     menu.Title,
 			Path:      menu.Path,
 			Name:      menu.Name,
 			Component: menu.Component,
 			Parent:    menu.Parent,
+			Type:      menu.Type,
+			Sort:      menu.Sort,
 			Meta: struct {
 				Title       string   `json:"title"`
-				IsLink      string   `json:"isLink"`
+				Hyperlink   string   `json:"hyperlink"`
 				IsHide      bool     `json:"isHide"`
 				IsKeepAlive bool     `json:"isKeepAlive"`
 				IsAffix     bool     `json:"isAffix"`
@@ -98,7 +106,7 @@ func (m *MenuTree) GetMenuTree() []*MenuValue {
 				Icon        string   `json:"icon"`
 			}{
 				Title:       menu.Title,
-				IsLink:      menu.IsLink,
+				Hyperlink:   menu.Hyperlink,
 				IsHide:      menu.IsHide,
 				IsKeepAlive: menu.IsKeepAlive,
 				IsAffix:     menu.IsAffix,
