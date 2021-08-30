@@ -10,10 +10,11 @@ import (
 
 func MenuTree(c *gin.Context) {
 	var (
-		err    error
-		menus  []*models.Menu
-		result []*models.MenuValue
-		m      models.MenuTree
+		err        error
+		menus      []*models.Menu
+		result     []*models.MenuValue
+		m          models.MenuTree
+		buttonList []*models.Menu
 	)
 
 	err = conn.Orm.Model(&models.Menu{}).
@@ -28,7 +29,29 @@ func MenuTree(c *gin.Context) {
 	m = models.MenuTree{Menus: menus}
 	result = m.GetMenuTree()
 
-	response.OK(c, result, "")
+	// 查询所有页面对应的按钮列表
+	err = conn.Orm.Model(&models.Menu{}).
+		Where("type = 3").
+		Order("sort, id").
+		Find(&buttonList).Error
+	if err != nil {
+		response.Error(c, err, response.GetMenuButtonError)
+		return
+	}
+
+	buttonMap := make(map[int][]*models.Menu)
+	for _, b := range buttonList {
+		if _, ok := buttonMap[b.Parent]; ok {
+			buttonMap[b.Parent] = append(buttonMap[b.Parent], b)
+		} else {
+			buttonMap[b.Parent] = []*models.Menu{b}
+		}
+	}
+
+	response.OK(c, map[string]interface{}{
+		"menu":   result,
+		"button": buttonMap,
+	}, "")
 }
 
 func SaveMenu(c *gin.Context) {

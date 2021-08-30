@@ -22,4 +22,5 @@ var (
 	SaveMenuError      = Response{Code: 400011, Message: "保存菜单数据失败"}
 	SubmenuExistsError = Response{Code: 400012, Message: "当前菜单存在子节点，无法直接删除"}
 	DeleteMenuError    = Response{Code: 400013, Message: "删除菜单失败"}
+	GetMenuButtonError = Response{Code: 400014, Message: "查询菜单按钮数据失败"}
 )
