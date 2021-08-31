@@ -110,3 +110,60 @@ func DeleteMenu(c *gin.Context) {
 
 	response.OK(c, "", "")
 }
+
+func BatchDeleteMenu(c *gin.Context) {
+	var (
+		err     error
+		menuIds struct {
+			MenuIds []int `json:"menu_ids"`
+		}
+		menuCount int64
+	)
+
+	err = c.ShouldBind(&menuIds)
+	if err != nil {
+		response.Error(c, err, response.InvalidParameterError)
+		return
+	}
+
+	// 确认是否存在子节点
+	err = conn.Orm.Model(&models.Menu{}).Where("parent in (?)", menuIds.MenuIds).Count(&menuCount).Error
+	if err != nil {
+		response.Error(c, err, response.GetMenuError)
+		return
+	}
+	if menuCount > 0 {
+		response.Error(c, err, response.SubmenuExistsError)
+		return
+	}
+
+	err = conn.Orm.Delete(&models.Menu{}, menuIds.MenuIds).Error
+	if err != nil {
+		response.Error(c, err, response.DeleteMenuError)
+		return
+	}
+
+	response.OK(c, "", "")
+}
+
+// MenuButton 查询菜单下的所有按钮
+func MenuButton(c *gin.Context) {
+	var (
+		err        error
+		menuId     string
+		buttonList []*models.Menu
+	)
+
+	menuId = c.Param("id")
+
+	err = conn.Orm.Model(&models.Menu{}).
+		Where("parent = ?", menuId).
+		Order("sort, id").
+		Find(&buttonList).Error
+	if err != nil {
+		response.Error(c, err, response.GetMenuButtonError)
+		return
+	}
+
+	response.OK(c, buttonList, "")
+}

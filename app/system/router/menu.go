@@ -16,5 +16,7 @@ func MenuRouter(g *gin.RouterGroup) {
 		router.GET("/tree", apis.MenuTree)
 		router.POST("", apis.SaveMenu)
 		router.DELETE("/:id", apis.DeleteMenu)
+		router.DELETE("/batch", apis.BatchDeleteMenu)
+		router.GET("/:id", apis.MenuButton)
 	}
 }
