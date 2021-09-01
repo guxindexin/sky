@@ -3,6 +3,7 @@ package apis
 import (
 	"sky/app/system/models"
 	"sky/pkg/conn"
+	"sky/pkg/pagination"
 	"sky/pkg/tools/response"
 
 	"golang.org/x/crypto/bcrypt"
@@ -11,7 +12,26 @@ import (
 )
 
 func UserList(c *gin.Context) {
-	response.OK(c, "", "")
+	var (
+		err      error
+		userList []*models.User
+		result   interface{}
+	)
+
+	SearchParams := map[string]map[string]interface{}{
+		"like": pagination.RequestParams(c),
+	}
+
+	result, err = pagination.Paging(&pagination.Param{
+		C:  c,
+		DB: conn.Orm.Model(&models.User{}),
+	}, &userList, SearchParams)
+	if err != nil {
+		response.Error(c, err, response.UserListError)
+		return
+	}
+
+	response.OK(c, result, "")
 }
 
 func UserInfo(c *gin.Context) {
@@ -70,6 +90,48 @@ func CreateUser(c *gin.Context) {
 	err = conn.Orm.Create(&user).Error
 	if err != nil {
 		response.Error(c, err, response.CreateUserError)
+		return
+	}
+
+	response.OK(c, "", "")
+}
+
+func UpdateUser(c *gin.Context) {
+	var (
+		err    error
+		userId string
+		user   models.User
+	)
+
+	userId = c.Param("id")
+
+	err = c.ShouldBind(&user)
+	if err != nil {
+		response.Error(c, err, response.InvalidParameterError)
+		return
+	}
+
+	// 更新用户
+	err = conn.Orm.Model(&models.User{}).Omit("password").Where("id = ?", userId).Save(&user).Error
+	if err != nil {
+		response.Error(c, err, response.UpdateUserError)
+		return
+	}
+
+	response.OK(c, "", "")
+}
+
+func DeleteUser(c *gin.Context) {
+	var (
+		err    error
+		userId string
+	)
+
+	userId = c.Param("id")
+
+	err = conn.Orm.Delete(&models.User{}, userId).Error
+	if err != nil {
+		response.Error(c, err, response.DeleteUserError)
 		return
 	}
 

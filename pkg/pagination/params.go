@@ -21,7 +21,7 @@ func RequestParams(c *gin.Context) map[string]interface{} {
 
 	if len(c.Request.Form) > 0 {
 		for key, value := range c.Request.Form {
-			if key == "page" || key == "per_page" || key == "sort" {
+			if key == "page" || key == "size" || key == "sort" {
 				continue
 			}
 			params[key] = value[0]

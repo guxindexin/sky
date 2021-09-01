@@ -23,4 +23,8 @@ var (
 	SubmenuExistsError = Response{Code: 40012, Message: "当前菜单存在子节点，无法直接删除"}
 	DeleteMenuError    = Response{Code: 40013, Message: "删除菜单失败"}
 	GetMenuButtonError = Response{Code: 40014, Message: "查询菜单按钮数据失败"}
+
+	UserListError   = Response{Code: 40015, Message: "查询用户列表失败"}
+	DeleteUserError = Response{Code: 40016, Message: "删除用户失败"}
+	UpdateUserError = Response{Code: 40017, Message: "更新用户失败"}
 )

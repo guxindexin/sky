@@ -16,5 +16,7 @@ func UserRouter(g *gin.RouterGroup) {
 		router.GET("", apis.UserList)
 		router.GET("/info", apis.UserInfo)
 		router.POST("", apis.CreateUser)
+		router.PUT("/:id", apis.UpdateUser)
+		router.DELETE("/:id", apis.DeleteUser)
 	}
 }
