@@ -12,6 +12,7 @@ type User struct {
 	Email    string `gorm:"column:email;type:varchar(100);comment:邮箱" json:"email"`
 	Sex      int    `gorm:"column:sex;type:smallint;comment:性别" json:"sex"`
 	Status   bool   `gorm:"column:status;type:boolean;comment:状态" json:"status"`
+	IsAdmin  bool   `gorm:"column:is_admin;type:boolean;comment:是否管理员" json:"is_admin"`
 	Remark   string `gorm:"column:remark;type:text;comment:备注" json:"remark"`
 	Role     []int  `gorm:"column:role;type:integer[];comment:角色" json:"role"`
 	Dept     []int  `gorm:"column:dept;type:integer[];comment:部门" json:"dept"`
