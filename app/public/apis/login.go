@@ -39,13 +39,18 @@ func Login(c *gin.Context) {
 		return
 	}
 
+	if !user.Status {
+		response.Error(c, nil, response.UserUnavailableError)
+		return
+	}
+
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(loginUser.Password))
 	if err != nil {
 		response.Error(c, err, response.IncorrectPasswordError)
 		return
 	}
 
-	token, err = jwtauth.GenToken(loginUser.Username)
+	token, err = jwtauth.GenToken(&user)
 	if err != nil {
 		response.Error(c, err, response.GenerateTokenError)
 		return

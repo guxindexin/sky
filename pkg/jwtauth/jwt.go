@@ -2,6 +2,7 @@ package jwtauth
 
 import (
 	"errors"
+	"sky/app/system/models"
 	"time"
 
 	"github.com/golang-jwt/jwt"
@@ -10,14 +11,16 @@ import (
 
 type Claims struct {
 	Username string `json:"username"`
+	IsAdmin  bool   `json:"is_admin"`
 	jwt.StandardClaims
 }
 
 // GenToken 生成JWT
-func GenToken(username string) (string, error) {
+func GenToken(userInfo *models.User) (string, error) {
 	// 创建一个我们自己的声明
 	c := Claims{
-		username, // 自定义字段
+		userInfo.Username,
+		userInfo.IsAdmin,
 		jwt.StandardClaims{
 			ExpiresAt: time.Now().Add(time.Minute * time.Duration(viper.GetInt("jwt.expires"))).Unix(), // 过期时间
 			Issuer:    viper.GetString("jwt.issuer"),                                                   // 签发人

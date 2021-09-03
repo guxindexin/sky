@@ -54,12 +54,17 @@ func CheckPermMiddleware() gin.HandlerFunc {
 		//获取实体
 		sub := c.GetString("username")
 
-		//判断策略中是否存在
-		if ok, _ := Enforcer.Enforce(sub, obj, act); ok {
+		isAdmin := c.GetBool("isAdmin")
+		if isAdmin {
 			c.Next()
 		} else {
-			response.Error(c, nil, response.NoPermissionError)
-			c.Abort()
+			//判断策略中是否存在
+			if ok, _ := Enforcer.Enforce(sub, obj, act); ok {
+				c.Next()
+			} else {
+				response.Error(c, nil, response.NoPermissionError)
+				c.Abort()
+			}
 		}
 	}
 }
