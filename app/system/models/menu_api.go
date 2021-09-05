@@ -5,8 +5,8 @@ import (
 )
 
 type MenuApi struct {
-	Menu int    `gorm:"column:path;type:varchar(200);comment:菜单" json:"path"`
-	Api  string `gorm:"column:name;type:varchar(100);comment:接口" json:"name"`
+	Menu int `gorm:"column:menu;type:integer;comment:菜单" json:"menu"`
+	Api  int `gorm:"column:api;type:integer;comment:接口" json:"api"`
 	models.BaseModel
 }
 

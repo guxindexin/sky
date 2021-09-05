@@ -33,8 +33,9 @@ func RoleList(c *gin.Context) {
 
 func SaveRole(c *gin.Context) {
 	var (
-		err  error
-		role models.Role
+		err       error
+		role      models.Role
+		roleCount int64
 	)
 
 	err = c.ShouldBind(&role)
@@ -53,6 +54,14 @@ func SaveRole(c *gin.Context) {
 	if err != nil {
 		response.Error(c, err, response.SaveRoleError)
 		return
+	} else {
+		err = conn.Orm.Model(&models.Role{}).
+			Where("key = ? or name = ?", role.Key, role.Name).
+			Count(&roleCount).Error
+		if err != nil {
+			response.Error(c, err, response.RoleExistError)
+			return
+		}
 	}
 
 	response.OK(c, "", "")
