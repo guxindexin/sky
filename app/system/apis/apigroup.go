@@ -50,7 +50,7 @@ func SaveApiGroup(c *gin.Context) {
 		db = db.Where("id = ?", apiGroup.Id)
 	} else {
 		err = conn.Orm.Model(&models.ApiGroup{}).
-			Where("'app' = ?", apiGroup.App).
+			Where("\"name\" = ?", apiGroup.Name).
 			Count(&apiGroupCount).Error
 		if err != nil {
 			response.Error(c, err, response.ApiGroupExistError)

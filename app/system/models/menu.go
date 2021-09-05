@@ -11,7 +11,7 @@ type Menu struct {
 	Name        string         `gorm:"column:name;type:varchar(100);comment:路由名称" json:"name"`
 	Component   string         `gorm:"column:component;type:varchar(200);comment:组件路径" json:"component"`
 	Redirect    string         `gorm:"column:redirect;type:varchar(200);comment:跳转地址" json:"redirect"`
-	Title       string         `gorm:"column:title;type:varchar(200);comment:标题" json:"title"`
+	Title       string         `gorm:"column:title;type:varchar(200);comment:标题" json:"title" binding:"required"`
 	Hyperlink   string         `gorm:"column:hyperlink;type:varchar(200);comment:是否超链接" json:"hyperlink"`
 	IsHide      bool           `gorm:"column:is_hide;type:boolean;comment:是否隐藏" json:"isHide"`
 	IsKeepAlive bool           `gorm:"column:is_keep_alive;type:boolean;comment:是否缓存组件状态" json:"isKeepAlive"`
