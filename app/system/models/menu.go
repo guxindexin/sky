@@ -20,7 +20,7 @@ type Menu struct {
 	Auth        pq.StringArray `gorm:"column:auth;type:varchar(50)[];comment:权限标识" json:"auth"`
 	Icon        string         `gorm:"column:icon;type:varchar(200);comment:图标" json:"icon"`
 	Parent      int            `gorm:"column:parent;type:integer;comment:父级" json:"parent"`
-	Type        int            `gorm:"column:type;type:smallint;comment:类型" json:"type"` // 1 菜单，2 按钮
+	Type        int            `gorm:"column:type;type:smallint;comment:类型" json:"type"` // 1 目录，2 菜单，3 按钮
 	Sort        int            `gorm:"column:sort;type:smallint;comment:顺序" json:"sort"`
 	models.BaseModel
 }

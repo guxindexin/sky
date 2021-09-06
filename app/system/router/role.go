@@ -12,5 +12,7 @@ func RoleRouter(g *gin.RouterGroup) {
 		router.GET("", apis.RoleList)
 		router.POST("", apis.SaveRole)
 		router.DELETE("/:id", apis.DeleteRole)
+		router.POST("/permission/:id", apis.UpdateRolePermission)
+		router.GET("/permission/:id", apis.GetRolePermission)
 	}
 }

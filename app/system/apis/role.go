@@ -1,10 +1,13 @@
 package apis
 
 import (
+	"fmt"
 	"sky/app/system/models"
 	"sky/pkg/conn"
 	"sky/pkg/pagination"
 	"sky/pkg/tools/response"
+	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -95,4 +98,120 @@ func DeleteRole(c *gin.Context) {
 	}
 
 	response.OK(c, "", "")
+}
+
+func UpdateRolePermission(c *gin.Context) {
+	var (
+		err                error
+		newRoleMenu        []*models.RoleMenu
+		createRoleMenu     []models.RoleMenu
+		roleMenu           []*models.RoleMenu
+		roleId             string
+		oldRoleMenuMap     map[string]int
+		newRoleMenuMap     map[string]struct{}
+		deleteRoleMenuList []int
+	)
+
+	roleId = c.Param("id")
+	createRoleMenu = make([]models.RoleMenu, 0)
+
+	err = c.ShouldBind(&newRoleMenu)
+	if err != nil {
+		response.Error(c, err, response.InvalidParameterError)
+		return
+	}
+
+	// 查询角色对应的菜单列表
+	err = conn.Orm.Model(&models.RoleMenu{}).Where("role = ?", roleId).Find(&roleMenu).Error
+	if err != nil {
+		response.Error(c, err, response.GetRoleMenuError)
+		return
+	}
+
+	if len(roleMenu) > 0 {
+		oldRoleMenuMap = make(map[string]int)
+		newRoleMenuMap = make(map[string]struct{})
+
+		for _, oldRoleMenu := range roleMenu {
+			oldRoleMenuMap[fmt.Sprintf("%d-%d-%d", oldRoleMenu.Role, oldRoleMenu.Menu, oldRoleMenu.Type)] = oldRoleMenu.Id
+		}
+
+		for _, newRoleMenu := range newRoleMenu {
+			roleMenuKey := fmt.Sprintf("%d-%d-%d", newRoleMenu.Role, newRoleMenu.Menu, newRoleMenu.Type)
+			if _, ok := oldRoleMenuMap[roleMenuKey]; ok {
+				delete(oldRoleMenuMap, roleMenuKey)
+			} else {
+				roleMenuSlice := strings.Split(roleMenuKey, "-")
+				roleIdTmp, _ := strconv.Atoi(roleMenuSlice[0])
+				menuIdTmp, _ := strconv.Atoi(roleMenuSlice[1])
+				typeTmp, _ := strconv.Atoi(roleMenuSlice[2])
+				createRoleMenu = append(createRoleMenu, models.RoleMenu{
+					Role: roleIdTmp,
+					Menu: menuIdTmp,
+					Type: typeTmp,
+				})
+			}
+			newRoleMenuMap[roleMenuKey] = struct{}{}
+		}
+
+		if len(createRoleMenu) > 0 {
+			err = conn.Orm.Model(&models.RoleMenu{}).Create(&createRoleMenu).Error
+			if err != nil {
+				response.Error(c, err, response.CreateRoleMenuError)
+				return
+			}
+		}
+
+		// 获取需要删除的节点
+		deleteRoleMenuList = make([]int, 0, len(oldRoleMenuMap))
+		for _, v := range oldRoleMenuMap {
+			deleteRoleMenuList = append(deleteRoleMenuList, v)
+		}
+		if len(deleteRoleMenuList) > 0 {
+			err = conn.Orm.Delete(&models.RoleMenu{}, deleteRoleMenuList).Error
+			if err != nil {
+				response.Error(c, err, response.DeleteRoleMenuError)
+				return
+			}
+		}
+	} else {
+		err = conn.Orm.Model(&models.RoleMenu{}).Create(&newRoleMenu).Error
+		if err != nil {
+			response.Error(c, err, response.CreateRoleMenuError)
+			return
+		}
+	}
+
+	response.OK(c, "", "")
+}
+
+func GetRolePermission(c *gin.Context) {
+	var (
+		err           error
+		roleMenus     []int
+		roleId        string
+		parentMenuIds []int
+	)
+
+	roleId = c.Param("id")
+
+	// 查询所有的父级别ID
+	err = conn.Orm.Model(&models.Menu{}).
+		Select("distinct parent").
+		Where("parent != 0 and type = 2").
+		Pluck("parent", &parentMenuIds).Error
+	if err != nil {
+		response.Error(c, err, response.GetMenuParentError)
+		return
+	}
+
+	err = conn.Orm.Model(&models.RoleMenu{}).Where("role = ? and type = 1 and menu not in (?)", roleId, parentMenuIds).Pluck("menu", &roleMenus).Error
+	if err != nil {
+		response.Error(c, err, response.GetRolePermissionError)
+		return
+	}
+
+	response.OK(c, map[string]interface{}{
+		"menu": roleMenus,
+	}, "")
 }

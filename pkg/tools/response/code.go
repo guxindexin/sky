@@ -43,5 +43,9 @@ var (
 	GetApiError            = Response{Code: 40033, Message: "获取API失败"}
 	ApiGroupUsedError      = Response{Code: 40034, Message: "API分组被使用，无法删除"}
 	DeleteApiGroupError    = Response{Code: 40035, Message: "删除API分组失败"}
-	GetApiGroupTreeError   = Response{Code: 40036, Message: "获取API分组树失败"}
+	GetRoleMenuError       = Response{Code: 40036, Message: "查询角色对应的菜单列表失败"}
+	CreateRoleMenuError    = Response{Code: 40037, Message: "角色关联菜单权限失败"}
+	DeleteRoleMenuError    = Response{Code: 40037, Message: "删除角色关联菜单权限失败"}
+	GetRolePermissionError = Response{Code: 40038, Message: "查询角色对应的菜单权限失败"}
+	GetMenuParentError     = Response{Code: 40039, Message: "查询所有父级别菜单失败"}
 )
