@@ -47,5 +47,6 @@ var (
 	CreateRoleMenuError    = Response{Code: 40037, Message: "角色关联菜单权限失败"}
 	DeleteRoleMenuError    = Response{Code: 40037, Message: "删除角色关联菜单权限失败"}
 	GetRolePermissionError = Response{Code: 40038, Message: "查询角色对应的菜单权限失败"}
+	GetRoleButtonError     = Response{Code: 40038, Message: "查询角色对应的菜单按钮权限失败"}
 	GetMenuParentError     = Response{Code: 40039, Message: "查询所有父级别菜单失败"}
 )

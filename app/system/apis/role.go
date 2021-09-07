@@ -187,8 +187,13 @@ func UpdateRolePermission(c *gin.Context) {
 
 func GetRolePermission(c *gin.Context) {
 	var (
-		err           error
-		roleMenus     []int
+		err            error
+		roleMenus      []int
+		roleMenuButton []struct {
+			models.RoleMenu
+			Parent int `json:"parent"`
+		}
+		roleButtons   map[int][]int
 		roleId        string
 		parentMenuIds []int
 	)
@@ -205,13 +210,33 @@ func GetRolePermission(c *gin.Context) {
 		return
 	}
 
+	// 当前菜单权限
 	err = conn.Orm.Model(&models.RoleMenu{}).Where("role = ? and type = 1 and menu not in (?)", roleId, parentMenuIds).Pluck("menu", &roleMenus).Error
 	if err != nil {
 		response.Error(c, err, response.GetRolePermissionError)
 		return
 	}
 
+	// 查询按钮权限
+	err = conn.Orm.Model(&models.RoleMenu{}).
+		Joins("left join system_menu on system_menu.id = system_role_menu.menu").
+		Select("system_role_menu.*, system_menu.parent").
+		Where("system_role_menu.role = ? and system_role_menu.type = 2", roleId).Find(&roleMenuButton).Error
+	if err != nil {
+		response.Error(c, err, response.GetRoleButtonError)
+		return
+	}
+	roleButtons = make(map[int][]int)
+	for _, v := range roleMenuButton {
+		if _, ok := roleButtons[v.Parent]; ok {
+			roleButtons[v.Parent] = append(roleButtons[v.Parent], v.Menu)
+		} else {
+			roleButtons[v.Parent] = []int{v.Menu}
+		}
+	}
+
 	response.OK(c, map[string]interface{}{
-		"menu": roleMenus,
+		"menu":   roleMenus,
+		"button": roleButtons,
 	}, "")
 }

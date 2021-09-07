@@ -25,6 +25,10 @@ type Menu struct {
 	models.BaseModel
 }
 
+func (Menu) TableName() string {
+	return "system_menu"
+}
+
 type MenuValue struct {
 	Id        int    `json:"id"`
 	Title     string `json:"title"`
@@ -45,10 +49,6 @@ type MenuValue struct {
 		Icon        string   `json:"icon"`
 	} `json:"meta"`
 	Children []*MenuValue `json:"children"`
-}
-
-func (Menu) TableName() string {
-	return "system_menu"
 }
 
 type MenuTree struct {
