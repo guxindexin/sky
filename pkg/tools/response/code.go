@@ -34,7 +34,7 @@ var (
 	ApiListError           = Response{Code: 40024, Message: "查询API接口列表失败"}
 	SaveApiError           = Response{Code: 40025, Message: "保存API接口失败"}
 	DeleteApiError         = Response{Code: 40026, Message: "API接口删除失败"}
-	GetMenuApiError        = Response{Code: 40027, Message: "获取API接口对应的菜单或按钮失败"}
+	GetApiMenuError        = Response{Code: 40027, Message: "获取API接口对应的菜单或按钮失败"}
 	ApiUsedError           = Response{Code: 40028, Message: "API接口被其他角色关联，无法删除"}
 	SaveApiGroupError      = Response{Code: 40029, Message: "保存API分组失败"}
 	ApiGroupListError      = Response{Code: 40030, Message: "获取API分组列表失败"}
@@ -49,4 +49,7 @@ var (
 	GetRolePermissionError = Response{Code: 40038, Message: "查询角色对应的菜单权限失败"}
 	GetRoleButtonError     = Response{Code: 40038, Message: "查询角色对应的菜单按钮权限失败"}
 	GetMenuParentError     = Response{Code: 40039, Message: "查询所有父级别菜单失败"}
+	GetMenuApiError        = Response{Code: 40040, Message: "查询菜单绑定的API失败"}
+	MenuBindApiError       = Response{Code: 40041, Message: "菜单绑定API失败"}
+	MenuUnBindApiError     = Response{Code: 40042, Message: "菜单结束绑定API失败"}
 )

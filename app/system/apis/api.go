@@ -79,7 +79,7 @@ func DeleteApi(c *gin.Context) {
 	// 查询是否有菜单绑定了接口
 	err = conn.Orm.Model(&models.MenuApi{}).Where("api = ?", apiId).Count(&meunApiCount).Error
 	if err != nil {
-		response.Error(c, nil, response.GetMenuApiError)
+		response.Error(c, nil, response.GetApiMenuError)
 		return
 	}
 
