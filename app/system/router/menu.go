@@ -21,5 +21,6 @@ func MenuRouter(g *gin.RouterGroup) {
 		router.POST("/bind/api", apis.MenuBindApi)
 		router.DELETE("/unbind/api", apis.MenuUnBindApi)
 		router.GET("/api/:id", apis.MenuApis)
+		router.GET("/api-list/:id", apis.MenuApiList)
 	}
 }

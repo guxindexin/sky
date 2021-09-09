@@ -12,6 +12,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// RoleList 角色列表
 func RoleList(c *gin.Context) {
 	var (
 		err      error
@@ -34,6 +35,7 @@ func RoleList(c *gin.Context) {
 	response.OK(c, result, "")
 }
 
+// SaveRole 保存角色
 func SaveRole(c *gin.Context) {
 	var (
 		err       error
@@ -70,6 +72,7 @@ func SaveRole(c *gin.Context) {
 	response.OK(c, "", "")
 }
 
+// DeleteRole 删除角色
 func DeleteRole(c *gin.Context) {
 	var (
 		err       error
@@ -100,6 +103,7 @@ func DeleteRole(c *gin.Context) {
 	response.OK(c, "", "")
 }
 
+// UpdateRolePermission 更新角色权限
 func UpdateRolePermission(c *gin.Context) {
 	var (
 		err                error
@@ -185,6 +189,7 @@ func UpdateRolePermission(c *gin.Context) {
 	response.OK(c, "", "")
 }
 
+// GetRolePermission 获取角色权限
 func GetRolePermission(c *gin.Context) {
 	var (
 		err            error
@@ -239,4 +244,9 @@ func GetRolePermission(c *gin.Context) {
 		"menu":   roleMenus,
 		"button": roleButtons,
 	}, "")
+}
+
+// GetRoleApi 获取
+func GetRoleApi(c *gin.Context) {
+
 }

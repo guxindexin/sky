@@ -11,6 +11,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// UserList 用户列表
 func UserList(c *gin.Context) {
 	var (
 		err      error
@@ -34,6 +35,7 @@ func UserList(c *gin.Context) {
 	response.OK(c, result, "")
 }
 
+// UserInfo 用户详情
 func UserInfo(c *gin.Context) {
 	var (
 		err  error
@@ -52,6 +54,7 @@ func UserInfo(c *gin.Context) {
 	response.OK(c, user, "")
 }
 
+// CreateUser 创建用户
 func CreateUser(c *gin.Context) {
 	var (
 		err       error
@@ -96,6 +99,7 @@ func CreateUser(c *gin.Context) {
 	response.OK(c, "", "")
 }
 
+// UpdateUser 更新用户
 func UpdateUser(c *gin.Context) {
 	var (
 		err    error
@@ -121,6 +125,7 @@ func UpdateUser(c *gin.Context) {
 	response.OK(c, "", "")
 }
 
+// DeleteUser 删除用户
 func DeleteUser(c *gin.Context) {
 	var (
 		err    error

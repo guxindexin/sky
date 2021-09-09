@@ -8,6 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// MenuTree 菜单树
 func MenuTree(c *gin.Context) {
 	var (
 		err        error
@@ -54,6 +55,7 @@ func MenuTree(c *gin.Context) {
 	}, "")
 }
 
+// SaveMenu 保存菜单
 func SaveMenu(c *gin.Context) {
 	var (
 		err  error
@@ -81,6 +83,7 @@ func SaveMenu(c *gin.Context) {
 	response.OK(c, menu, "")
 }
 
+// DeleteMenu 删除菜单
 func DeleteMenu(c *gin.Context) {
 	var (
 		err       error
@@ -111,6 +114,7 @@ func DeleteMenu(c *gin.Context) {
 	response.OK(c, "", "")
 }
 
+// BatchDeleteMenu 批量删除菜单
 func BatchDeleteMenu(c *gin.Context) {
 	var (
 		err     error
@@ -220,7 +224,7 @@ func MenuBindApi(c *gin.Context) {
 	response.OK(c, "", "")
 }
 
-// MenuUnBindApi 菜单绑定API
+// MenuUnBindApi 菜单解绑API
 func MenuUnBindApi(c *gin.Context) {
 	var (
 		err    error
@@ -256,6 +260,35 @@ func MenuApis(c *gin.Context) {
 	menuId = c.Param("id")
 
 	err = conn.Orm.Debug().Model(&models.MenuApi{}).Select("distinct api").Where("menu = ?", menuId).Pluck("api", &apiList).Error
+	if err != nil {
+		response.Error(c, err, response.GetMenuApiError)
+		return
+	}
+
+	response.OK(c, apiList, "")
+}
+
+// MenuApiList 查询菜单绑定的API列表
+func MenuApiList(c *gin.Context) {
+	var (
+		err     error
+		menuId  string
+		apiIds  []int
+		apiList []models.Api
+	)
+
+	menuId = c.Param("id")
+
+	err = conn.Orm.Debug().Model(&models.MenuApi{}).
+		Select("distinct api").
+		Where("menu = ?", menuId).
+		Pluck("api", &apiIds).Error
+	if err != nil {
+		response.Error(c, err, response.GetMenuApiError)
+		return
+	}
+
+	err = conn.Orm.Model(&models.Api{}).Where("id in (?)", apiIds).Find(&apiList).Error
 	if err != nil {
 		response.Error(c, err, response.GetMenuApiError)
 		return

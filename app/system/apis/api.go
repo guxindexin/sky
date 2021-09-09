@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// ApiList 接口列表
 func ApiList(c *gin.Context) {
 	var (
 		err     error
@@ -40,6 +41,7 @@ func ApiList(c *gin.Context) {
 	response.OK(c, result, "")
 }
 
+// SaveApi 保存接口
 func SaveApi(c *gin.Context) {
 	var (
 		err error
@@ -67,6 +69,7 @@ func SaveApi(c *gin.Context) {
 	response.OK(c, "", "")
 }
 
+// DeleteApi 删除接口
 func DeleteApi(c *gin.Context) {
 	var (
 		err          error

@@ -9,6 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// ApiGroupList 接口分组列表
 func ApiGroupList(c *gin.Context) {
 	var (
 		err          error
@@ -31,6 +32,7 @@ func ApiGroupList(c *gin.Context) {
 	response.OK(c, result, "")
 }
 
+// SaveApiGroup 保存接口分组
 func SaveApiGroup(c *gin.Context) {
 	var (
 		err           error
@@ -67,6 +69,7 @@ func SaveApiGroup(c *gin.Context) {
 	response.OK(c, "", "")
 }
 
+// DeleteApiGroup 删除接口分组
 func DeleteApiGroup(c *gin.Context) {
 	var (
 		err        error
