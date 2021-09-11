@@ -28,7 +28,6 @@ var (
 	UserUnavailableError   = Response{Code: 40018, Message: "用户不可用"}
 	RoleListError          = Response{Code: 40019, Message: "查询角色列表失败"}
 	SaveRoleError          = Response{Code: 40020, Message: "保存角色失败"}
-	GetRoleUserError       = Response{Code: 40021, Message: "获取角色对应的用户失败"}
 	RoleUsedError          = Response{Code: 40022, Message: "角色被其他用户关联，无法删除"}
 	DeleteRoleError        = Response{Code: 40023, Message: "角色删除失败"}
 	ApiListError           = Response{Code: 40024, Message: "查询API接口列表失败"}
@@ -52,4 +51,8 @@ var (
 	GetMenuApiError        = Response{Code: 40040, Message: "查询菜单绑定的API失败"}
 	MenuBindApiError       = Response{Code: 40041, Message: "菜单绑定API失败"}
 	MenuUnBindApiError     = Response{Code: 40042, Message: "菜单结束绑定API失败"}
+	CreateUserRoleError    = Response{Code: 40043, Message: "创建用户与角色的关联到Casbin中失败"}
+	DeleteUserRoleError    = Response{Code: 40044, Message: "删除用户与角色的关联到Casbin中失败"}
+	GetRoleError           = Response{Code: 40045, Message: "获取角色信息失败"}
+	UserRoleError          = Response{Code: 40046, Message: "当前用户关联了其他角色，无法直接删除"}
 )

@@ -52,7 +52,7 @@ func SaveApiGroup(c *gin.Context) {
 		db = db.Where("id = ?", apiGroup.Id)
 	} else {
 		err = conn.Orm.Model(&models.ApiGroup{}).
-			Where("\"name\" = ?", apiGroup.Name).
+			Where(`"name" = ?`, apiGroup.Name).
 			Count(&apiGroupCount).Error
 		if err != nil {
 			response.Error(c, err, response.ApiGroupExistError)
@@ -79,7 +79,7 @@ func DeleteApiGroup(c *gin.Context) {
 
 	apiGroupId = c.Param("id")
 
-	err = conn.Orm.Model(&models.Api{}).Where("\"group\" = ?", apiGroupId).Count(&apiCount).Error
+	err = conn.Orm.Model(&models.Api{}).Where(`group" = ?`, apiGroupId).Count(&apiCount).Error
 	if err != nil {
 		response.Error(c, err, response.GetApiError)
 		return

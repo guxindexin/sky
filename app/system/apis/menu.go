@@ -259,7 +259,7 @@ func MenuApis(c *gin.Context) {
 
 	menuId = c.Param("id")
 
-	err = conn.Orm.Debug().Model(&models.MenuApi{}).Select("distinct api").Where("menu = ?", menuId).Pluck("api", &apiList).Error
+	err = conn.Orm.Model(&models.MenuApi{}).Select("distinct api").Where("menu = ?", menuId).Pluck("api", &apiList).Error
 	if err != nil {
 		response.Error(c, err, response.GetMenuApiError)
 		return
@@ -279,7 +279,7 @@ func MenuApiList(c *gin.Context) {
 
 	menuId = c.Param("id")
 
-	err = conn.Orm.Debug().Model(&models.MenuApi{}).
+	err = conn.Orm.Model(&models.MenuApi{}).
 		Select("distinct api").
 		Where("menu = ?", menuId).
 		Pluck("api", &apiIds).Error

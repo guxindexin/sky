@@ -18,7 +18,7 @@ func ApiList(c *gin.Context) {
 		result  interface{}
 	)
 
-	db := conn.Orm.Debug().Model(&models.Api{})
+	db := conn.Orm.Model(&models.Api{})
 
 	title := c.DefaultQuery("title", "")
 	if title != "" {
@@ -27,7 +27,7 @@ func ApiList(c *gin.Context) {
 
 	group := c.DefaultQuery("group", "")
 	if group != "" {
-		db = db.Where("\"group\" = ?", group)
+		db = db.Where(`"group" = ?`, group)
 	}
 
 	result, err = pagination.Paging(&pagination.Param{

@@ -1,6 +1,6 @@
 BEGIN;
 -- 用户
-INSERT INTO system_user (username, password, nickname, tel, email, sex, status, is_admin, remark, role, create_time, update_time, delete_time) VALUES ('lanyulei', '$2a$10$7AkPs/BP4h3JQiK0K2vPLeh/qa.soqsiCllhjwvHYkfEnHo./kQo6', '兰玉磊', '', '', 0, true, true, '', null, '2021-08-25 16:33:23.108187 +00:00', '2021-08-25 16:33:23.108187 +00:00', null);
+INSERT INTO system_user (username, password, nickname, tel, email, sex, status, is_admin, remark, create_time, update_time, delete_time) VALUES ('lanyulei', '$2a$10$7AkPs/BP4h3JQiK0K2vPLeh/qa.soqsiCllhjwvHYkfEnHo./kQo6', '兰玉磊', '', '', 0, true, true, '', '2021-08-25 16:33:23.108187 +00:00', '2021-08-25 16:33:23.108187 +00:00', null);
 
 -- 菜单
 INSERT INTO system_menu (path, name, component, redirect, title, hyperlink, is_hide, is_keep_alive, is_affix, is_iframe, auth, icon, parent, type, sort, create_time, update_time, delete_time) VALUES ('/home', 'Home', 'home/index', '', '首页', '', false, true, true, false, '{admin,test}', 'iconfont icon-shouye', 0, 2, 0, '2021-09-02 15:30:08.646648 +00:00', '2021-09-02 15:30:08.646648 +00:00', null);

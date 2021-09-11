@@ -3,6 +3,7 @@ package apis
 import (
 	"fmt"
 	"sky/app/system/models"
+	"sky/common/middleware/permission"
 	"sky/pkg/conn"
 	"sky/pkg/pagination"
 	"sky/pkg/tools/response"
@@ -53,12 +54,6 @@ func SaveRole(c *gin.Context) {
 
 	if role.Id != 0 {
 		db = db.Where("id = ?", role.Id)
-	}
-
-	err = db.Save(&role).Error
-	if err != nil {
-		response.Error(c, err, response.SaveRoleError)
-		return
 	} else {
 		err = conn.Orm.Model(&models.Role{}).
 			Where("key = ? or name = ?", role.Key, role.Name).
@@ -69,28 +64,34 @@ func SaveRole(c *gin.Context) {
 		}
 	}
 
+	err = db.Save(&role).Error
+	if err != nil {
+		response.Error(c, err, response.SaveRoleError)
+		return
+	}
+
 	response.OK(c, "", "")
 }
 
 // DeleteRole 删除角色
 func DeleteRole(c *gin.Context) {
 	var (
-		err       error
-		roleId    string
-		userCount int64
+		err    error
+		roleId string
+		role   models.Role
 	)
 
 	roleId = c.Param("id")
 
-	// 查询是否有用户关联了角色
-	err = conn.Orm.Model(&models.User{}).Where("(? = any(role))", roleId).Count(&userCount).Error
+	err = conn.Orm.Model(&models.Role{}).Where("id = ?", roleId).Find(&role).Error
 	if err != nil {
-		response.Error(c, err, response.GetRoleUserError)
+		response.Error(c, err, response.GetRoleError)
 		return
 	}
 
-	if userCount > 0 {
-		response.Error(c, nil, response.RoleUsedError)
+	groups := permission.Enforcer.GetFilteredNamedGroupingPolicy("g", 1, role.Key)
+	if len(groups) > 0 {
+		response.Error(c, err, response.RoleUsedError)
 		return
 	}
 
