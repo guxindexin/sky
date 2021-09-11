@@ -247,7 +247,97 @@ func GetRolePermission(c *gin.Context) {
 	}, "")
 }
 
-// GetRoleApi 获取
-func GetRoleApi(c *gin.Context) {
+func RoleApiPermission(c *gin.Context) {
+	var (
+		err    error
+		role   models.Role
+		roleId string
+		apis   []models.Api
+		groups [][]string
+		params struct {
+			Type int   `json:"type"` // 1 绑定api权限，0 解除api权限
+			Api  []int `json:"api"`
+		}
+	)
 
+	roleId = c.Param("id")
+
+	err = c.ShouldBind(&params)
+	if err != nil {
+		response.Error(c, err, response.InvalidParameterError)
+		return
+	}
+
+	// 查询角色信息
+	err = conn.Orm.Model(&models.Role{}).Where("id = ?", roleId).Find(&role).Error
+	if err != nil {
+		response.Error(c, err, response.GetRoleError)
+		return
+	}
+
+	// 查询 API 接口
+	err = conn.Orm.Model(&models.Api{}).Where("id in (?)", params.Api).Find(&apis).Error
+	if err != nil {
+		response.Error(c, err, response.GetApiError)
+		return
+	}
+
+	for _, api := range apis {
+		groups = append(groups, []string{role.Key, api.URL, api.Method})
+	}
+
+	if params.Type == 1 {
+		_, err = permission.Enforcer.AddNamedPolicies("p", groups)
+		if err != nil {
+			response.Error(c, err, response.RoleBindApiError)
+			return
+		}
+	} else if params.Type == 0 {
+		_, err = permission.Enforcer.RemoveNamedPolicies("p", groups)
+		if err != nil {
+			response.Error(c, err, response.RoleUnBindApiError)
+			return
+		}
+	}
+
+	response.OK(c, "", "")
+}
+
+// GetRoleApi 获取角色绑定的API接口
+func GetRoleApi(c *gin.Context) {
+	var (
+		err    error
+		role   models.Role
+		roleId string
+		menuId string
+		apis   []int
+	)
+
+	roleId = c.Param("id")
+
+	menuId = c.DefaultQuery("menu", "")
+	if menuId == "" {
+		response.Error(c, nil, response.InvalidParameterError)
+		return
+	}
+
+	err = conn.Orm.Model(&models.Role{}).Where("id = ?", roleId).Find(&role).Error
+	if err != nil {
+		response.Error(c, err, response.GetRoleError)
+		return
+	}
+
+	db := conn.Orm.Debug().Model(&models.Api{}).
+		Select("system_api.id").
+		Joins("left join system_menu_api on system_menu_api.api = system_api.id")
+	for _, p := range permission.Enforcer.GetFilteredNamedPolicy("p", 0, role.Key) {
+		db = db.Or("system_api.url = ? and system_api.method = ?", p[1], p[2])
+	}
+	err = db.Where("system_menu_api.menu = ?", menuId).Pluck("system_api.id", &apis).Error
+	if err != nil {
+		response.Error(c, err, response.GetApiError)
+		return
+	}
+
+	response.OK(c, apis, "")
 }

@@ -48,7 +48,7 @@ func CasbinSetup() *casbin.SyncedEnforcer {
 func CheckPermMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		//获取资源
-		obj := c.Request.URL.RequestURI()
+		obj := c.Request.URL.Path
 		//获取方法
 		act := c.Request.Method
 		//获取实体

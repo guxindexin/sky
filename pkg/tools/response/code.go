@@ -55,4 +55,6 @@ var (
 	DeleteUserRoleError    = Response{Code: 40044, Message: "删除用户与角色的关联到Casbin中失败"}
 	GetRoleError           = Response{Code: 40045, Message: "获取角色信息失败"}
 	UserRoleError          = Response{Code: 40046, Message: "当前用户关联了其他角色，无法直接删除"}
+	RoleBindApiError       = Response{Code: 40046, Message: "角色绑定接口权限失败"}
+	RoleUnBindApiError     = Response{Code: 40046, Message: "角色解除接口权限失败"}
 )
