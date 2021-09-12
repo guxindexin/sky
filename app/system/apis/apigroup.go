@@ -79,7 +79,7 @@ func DeleteApiGroup(c *gin.Context) {
 
 	apiGroupId = c.Param("id")
 
-	err = conn.Orm.Model(&models.Api{}).Where(`group" = ?`, apiGroupId).Count(&apiCount).Error
+	err = conn.Orm.Model(&models.Api{}).Where(`"group" = ?`, apiGroupId).Count(&apiCount).Error
 	if err != nil {
 		response.Error(c, err, response.GetApiError)
 		return

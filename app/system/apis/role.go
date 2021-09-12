@@ -76,9 +76,10 @@ func SaveRole(c *gin.Context) {
 // DeleteRole 删除角色
 func DeleteRole(c *gin.Context) {
 	var (
-		err    error
-		roleId string
-		role   models.Role
+		err           error
+		roleId        string
+		role          models.Role
+		roleMenuCount int64
 	)
 
 	roleId = c.Param("id")
@@ -89,9 +90,21 @@ func DeleteRole(c *gin.Context) {
 		return
 	}
 
+	// 获取角色绑定的用户
 	groups := permission.Enforcer.GetFilteredNamedGroupingPolicy("g", 1, role.Key)
 	if len(groups) > 0 {
 		response.Error(c, err, response.RoleUsedError)
+		return
+	}
+
+	// 获取角色绑定的菜单数据
+	err = conn.Orm.Model(&models.RoleMenu{}).Where("role = ?", roleId).Count(&roleMenuCount).Error
+	if err != nil {
+		response.Error(c, err, response.GetRoleMenuError)
+		return
+	}
+	if roleMenuCount > 0 {
+		response.Error(c, err, response.RoleBindMenuError)
 		return
 	}
 
@@ -247,6 +260,7 @@ func GetRolePermission(c *gin.Context) {
 	}, "")
 }
 
+// RoleApiPermission 角色的接口权限
 func RoleApiPermission(c *gin.Context) {
 	var (
 		err    error
@@ -306,11 +320,12 @@ func RoleApiPermission(c *gin.Context) {
 // GetRoleApi 获取角色绑定的API接口
 func GetRoleApi(c *gin.Context) {
 	var (
-		err    error
-		role   models.Role
-		roleId string
-		menuId string
-		apis   []int
+		err      error
+		role     models.Role
+		roleId   string
+		menuId   string
+		apis     []int
+		roleApis [][]string
 	)
 
 	roleId = c.Param("id")
@@ -327,16 +342,22 @@ func GetRoleApi(c *gin.Context) {
 		return
 	}
 
-	db := conn.Orm.Debug().Model(&models.Api{}).
-		Select("system_api.id").
-		Joins("left join system_menu_api on system_menu_api.api = system_api.id")
-	for _, p := range permission.Enforcer.GetFilteredNamedPolicy("p", 0, role.Key) {
-		db = db.Or("system_api.url = ? and system_api.method = ?", p[1], p[2])
-	}
-	err = db.Where("system_menu_api.menu = ?", menuId).Pluck("system_api.id", &apis).Error
-	if err != nil {
-		response.Error(c, err, response.GetApiError)
-		return
+	roleApis = permission.Enforcer.GetFilteredNamedPolicy("p", 0, role.Key)
+
+	if len(roleApis) > 0 {
+
+		db := conn.Orm.Debug().Model(&models.Api{}).
+			Select("system_api.id").
+			Joins("left join system_menu_api on system_menu_api.api = system_api.id")
+
+		for _, p := range roleApis {
+			db = db.Or("system_api.url = ? and system_api.method = ?", p[1], p[2])
+		}
+		err = db.Where("system_menu_api.menu = ?", menuId).Pluck("system_api.id", &apis).Error
+		if err != nil {
+			response.Error(c, err, response.GetApiError)
+			return
+		}
 	}
 
 	response.OK(c, apis, "")

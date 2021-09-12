@@ -65,6 +65,7 @@ func UserInfo(c *gin.Context) {
 	response.OK(c, user, "")
 }
 
+// UserInfoById 通过ID获取用户详情
 func UserInfoById(c *gin.Context) {
 	var (
 		err  error
@@ -188,46 +189,44 @@ func UpdateUser(c *gin.Context) {
 		return
 	}
 
-	if len(user.Role) > 0 {
-		groupMap = make(map[string]struct{})
-		for _, role := range user.Role {
-			groups = append(groups, []string{user.Username, role})
-			groupMap[role] = struct{}{}
+	groupMap = make(map[string]struct{})
+	for _, role := range user.Role {
+		groups = append(groups, []string{user.Username, role})
+		groupMap[role] = struct{}{}
+	}
+
+	// 查询现有的角色关联
+	deleteGroups = make([][]string, 0)
+	currentGroups = permission.Enforcer.GetFilteredNamedGroupingPolicy("g", 0, user.Username)
+	for _, g := range currentGroups {
+		if _, ok := groupMap[g[1]]; !ok {
+			deleteGroups = append(deleteGroups, g)
+			delete(groupMap, g[1])
+		}
+	}
+
+	if len(deleteGroups) > 0 {
+		// 删除用户角色关联
+		_, err = permission.Enforcer.RemoveNamedGroupingPolicies("g", deleteGroups)
+		if err != nil {
+			tx.Rollback()
+			response.Error(c, err, response.DeleteUserRoleError)
+			return
+		}
+	}
+
+	if len(groupMap) > 0 {
+		createGroups = make([][]string, 0)
+		for k, _ := range groupMap {
+			createGroups = append(deleteGroups, []string{user.Username, k})
 		}
 
-		// 查询现有的角色关联
-		deleteGroups = make([][]string, 0)
-		currentGroups = permission.Enforcer.GetFilteredNamedGroupingPolicy("g", 0, user.Username)
-		for _, g := range currentGroups {
-			if _, ok := groupMap[g[1]]; !ok {
-				deleteGroups = append(deleteGroups, g)
-				delete(groupMap, g[1])
-			}
-		}
-
-		if len(deleteGroups) > 0 {
-			// 删除用户角色关联
-			_, err = permission.Enforcer.RemoveNamedGroupingPolicies("g", deleteGroups)
-			if err != nil {
-				tx.Rollback()
-				response.Error(c, err, response.DeleteUserRoleError)
-				return
-			}
-		}
-
-		if len(groupMap) > 0 {
-			createGroups = make([][]string, 0)
-			for k, _ := range groupMap {
-				createGroups = append(deleteGroups, []string{user.Username, k})
-			}
-
-			// 保存用户角色关联
-			_, err = permission.Enforcer.AddNamedGroupingPolicies("g", createGroups)
-			if err != nil {
-				tx.Rollback()
-				response.Error(c, err, response.CreateUserRoleError)
-				return
-			}
+		// 保存用户角色关联
+		_, err = permission.Enforcer.AddNamedGroupingPolicies("g", createGroups)
+		if err != nil {
+			tx.Rollback()
+			response.Error(c, err, response.CreateUserRoleError)
+			return
 		}
 	}
 	tx.Commit()
