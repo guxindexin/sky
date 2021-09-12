@@ -4,6 +4,7 @@ import (
 	"sky/app/system/models"
 	"sky/pkg/conn"
 	"sky/pkg/tools/response"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -177,13 +178,17 @@ func MenuBindApi(c *gin.Context) {
 	var (
 		err    error
 		params struct {
-			Menu int   `json:"menu"`
+			Type int   `json:"type"` // 1 绑定， 0 解绑
 			Apis []int `json:"apis"`
 		}
 		existApis []int
 		apiMaps   map[int]struct{}
 		menuApi   []models.MenuApi
+		menuId    string
 	)
+
+	menuId = c.Param("id")
+	menuIdInt, _ := strconv.Atoi(menuId)
 
 	err = c.ShouldBind(&params)
 	if err != nil {
@@ -191,59 +196,42 @@ func MenuBindApi(c *gin.Context) {
 		return
 	}
 
-	err = conn.Orm.Model(&models.MenuApi{}).Where("menu = ? and api in (?)", params.Menu, params.Apis).Pluck("api", &existApis).Error
-	if err != nil {
-		response.Error(c, err, response.GetMenuApiError)
-		return
-	}
-	apiMaps = make(map[int]struct{})
-	if len(existApis) != 0 {
-		for _, i := range existApis {
-			apiMaps[i] = struct{}{}
-		}
-	}
-
-	menuApi = make([]models.MenuApi, 0)
-	for _, i := range params.Apis {
-		if _, ok := apiMaps[i]; !ok {
-			menuApi = append(menuApi, models.MenuApi{
-				Menu: params.Menu,
-				Api:  i,
-			})
-		}
-	}
-
-	if len(menuApi) > 0 {
-		err = conn.Orm.Create(&menuApi).Error
+	if params.Type == 1 {
+		err = conn.Orm.Model(&models.MenuApi{}).Where("menu = ? and api in (?)", menuIdInt, params.Apis).Pluck("api", &existApis).Error
 		if err != nil {
-			response.Error(c, err, response.MenuBindApiError)
+			response.Error(c, err, response.GetMenuApiError)
 			return
 		}
-	}
-
-	response.OK(c, "", "")
-}
-
-// MenuUnBindApi 菜单解绑API
-func MenuUnBindApi(c *gin.Context) {
-	var (
-		err    error
-		params struct {
-			Menu int   `json:"menu"`
-			Apis []int `json:"apis"`
+		apiMaps = make(map[int]struct{})
+		if len(existApis) != 0 {
+			for _, i := range existApis {
+				apiMaps[i] = struct{}{}
+			}
 		}
-	)
 
-	err = c.ShouldBind(&params)
-	if err != nil {
-		response.Error(c, err, response.InvalidParameterError)
-		return
-	}
+		menuApi = make([]models.MenuApi, 0)
+		for _, i := range params.Apis {
+			if _, ok := apiMaps[i]; !ok {
+				menuApi = append(menuApi, models.MenuApi{
+					Menu: menuIdInt,
+					Api:  i,
+				})
+			}
+		}
 
-	err = conn.Orm.Where("menu = ? and api in (?)", params.Menu, params.Apis).Delete(&models.MenuApi{}).Error
-	if err != nil {
-		response.Error(c, err, response.MenuUnBindApiError)
-		return
+		if len(menuApi) > 0 {
+			err = conn.Orm.Create(&menuApi).Error
+			if err != nil {
+				response.Error(c, err, response.MenuBindApiError)
+				return
+			}
+		}
+	} else if params.Type == 0 {
+		err = conn.Orm.Where("menu = ? and api in (?)", menuIdInt, params.Apis).Delete(&models.MenuApi{}).Error
+		if err != nil {
+			response.Error(c, err, response.MenuUnBindApiError)
+			return
+		}
 	}
 
 	response.OK(c, "", "")
