@@ -21,7 +21,7 @@ db:
   maxIdleConn: 0
   connMaxLifetime: 60
 jwt:
-  timeout: 60
+  expires: 60
   secret: 7c61aa49bd124736917207eb960cede9
   issuer: sky
 casbin:
