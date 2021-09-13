@@ -67,5 +67,38 @@ INSERT INTO system_api (title, url, method, "group", remark, create_time, update
 INSERT INTO system_api (title, url, method, "group", remark, create_time, update_time) VALUES ('新建/编辑接口分组', '/api/v1/system/api-group', 'POST', 1, '', now(), now());
 INSERT INTO system_api (title, url, method, "group", remark, create_time, update_time) VALUES ('删除接口分组', '/api/v1/system/api-group/:id', 'DELETE', 1, '', now(), now());
 
+-- 菜单与接口的关联
+INSERT INTO system_menu_api (menu, api, create_time, update_time) VALUES (4, 6, now(), now());
+INSERT INTO system_menu_api (menu, api, create_time, update_time) VALUES (4, 5, now(), now());
+INSERT INTO system_menu_api (menu, api, create_time, update_time) VALUES (4, 4, now(), now());
+INSERT INTO system_menu_api (menu, api, create_time, update_time) VALUES (4, 3, now(), now());
+INSERT INTO system_menu_api (menu, api, create_time, update_time) VALUES (4, 2, now(), now());
+INSERT INTO system_menu_api (menu, api, create_time, update_time) VALUES (4, 1, now(), now());
+INSERT INTO system_menu_api (menu, api, create_time, update_time) VALUES (5, 21, now(), now());
+INSERT INTO system_menu_api (menu, api, create_time, update_time) VALUES (5, 20, now(), now());
+INSERT INTO system_menu_api (menu, api, create_time, update_time) VALUES (5, 19, now(), now());
+INSERT INTO system_menu_api (menu, api, create_time, update_time) VALUES (5, 18, now(), now());
+INSERT INTO system_menu_api (menu, api, create_time, update_time) VALUES (5, 17, now(), now());
+INSERT INTO system_menu_api (menu, api, create_time, update_time) VALUES (5, 16, now(), now());
+INSERT INTO system_menu_api (menu, api, create_time, update_time) VALUES (5, 15, now(), now());
+INSERT INTO system_menu_api (menu, api, create_time, update_time) VALUES (6, 27, now(), now());
+INSERT INTO system_menu_api (menu, api, create_time, update_time) VALUES (6, 26, now(), now());
+INSERT INTO system_menu_api (menu, api, create_time, update_time) VALUES (6, 25, now(), now());
+INSERT INTO system_menu_api (menu, api, create_time, update_time) VALUES (6, 24, now(), now());
+INSERT INTO system_menu_api (menu, api, create_time, update_time) VALUES (6, 23, now(), now());
+INSERT INTO system_menu_api (menu, api, create_time, update_time) VALUES (6, 22, now(), now());
+INSERT INTO system_menu_api (menu, api, create_time, update_time) VALUES (3, 14, now(), now());
+INSERT INTO system_menu_api (menu, api, create_time, update_time) VALUES (3, 13, now(), now());
+INSERT INTO system_menu_api (menu, api, create_time, update_time) VALUES (3, 12, now(), now());
+INSERT INTO system_menu_api (menu, api, create_time, update_time) VALUES (3, 11, now(), now());
+INSERT INTO system_menu_api (menu, api, create_time, update_time) VALUES (3, 10, now(), now());
+INSERT INTO system_menu_api (menu, api, create_time, update_time) VALUES (3, 9, now(), now());
+INSERT INTO system_menu_api (menu, api, create_time, update_time) VALUES (3, 8, now(), now());
+INSERT INTO system_menu_api (menu, api, create_time, update_time) VALUES (3, 7, now(), now());
+INSERT INTO system_menu_api (menu, api, create_time, update_time) VALUES (7, 18, now(), now());
+INSERT INTO system_menu_api (menu, api, create_time, update_time) VALUES (7, 19, now(), now());
+INSERT INTO system_menu_api (menu, api, create_time, update_time) VALUES (7, 20, now(), now());
+INSERT INTO system_menu_api (menu, api, create_time, update_time) VALUES (7, 21, now(), now());
+
 COMMIT;
 -- 执行结束
