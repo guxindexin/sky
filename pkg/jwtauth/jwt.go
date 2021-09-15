@@ -16,7 +16,7 @@ type Claims struct {
 }
 
 // GenToken 生成JWT
-func GenToken(userInfo *models.User) (string, error) {
+func GenToken(userInfo *models.UserRequest) (string, error) {
 	// 创建一个我们自己的声明
 	c := Claims{
 		userInfo.Username,

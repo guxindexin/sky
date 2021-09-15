@@ -42,12 +42,14 @@ func UserInfo(c *gin.Context) {
 		err  error
 		user struct {
 			models.User
-			Password string `json:"-"`
+			Page   []string `gorm:"-" json:"page"`
+			Button []string `gorm:"-" json:"button"`
 		}
-		groups [][]string
+		groups  [][]string
+		roleIds []int
 	)
 
-	err = conn.Orm.Model(&models.User{}).Where("username = ?", c.GetString("username")).Find(&user).Error
+	err = conn.Orm.Model(&models.User{}).Where("username = ?", c.GetString("username")).Scan(&user).Error
 	if err != nil {
 		response.Error(c, err, response.GetUserInfoError)
 		return
@@ -62,17 +64,49 @@ func UserInfo(c *gin.Context) {
 		user.Role = roles
 	}
 
+	if !user.IsAdmin {
+		// 查询角色ID
+		err = conn.Orm.Model(&models.Role{}).Where("key in (?)", user.Role).Pluck("id", &roleIds).Error
+		if err != nil {
+			response.Error(c, err, response.GetRoleError)
+			return
+		}
+
+		// 查询菜单权限
+		err = conn.Orm.Debug().Model(&models.RoleMenu{}).
+			Joins("left join system_menu on system_menu.id = system_role_menu.menu").
+			Select("distinct UNNEST(system_menu.auth) as auth").
+			Where(`system_role_menu.role in (?) and system_role_menu."type" = 1`, roleIds).
+			Pluck("auth", &user.Page).
+			Error
+		if err != nil {
+			response.Error(c, err, response.GetRoleMenuError)
+			return
+		}
+
+		// 查询按钮权限
+		err = conn.Orm.Debug().Model(&models.RoleMenu{}).
+			Joins("left join system_menu on system_menu.id = system_role_menu.menu").
+			Select("distinct UNNEST(system_menu.auth) as auth").
+			Where(`system_role_menu.role in (?) and system_role_menu."type" = 2`, roleIds).
+			Pluck("auth", &user.Button).
+			Error
+		if err != nil {
+			response.Error(c, err, response.GetRoleMenuError)
+			return
+		}
+	} else {
+		user.Page = []string{}
+		user.Button = []string{}
+	}
 	response.OK(c, user, "")
 }
 
 // UserInfoById 通过ID获取用户详情
 func UserInfoById(c *gin.Context) {
 	var (
-		err  error
-		user struct {
-			models.User
-			Password string `json:"-"`
-		}
+		err    error
+		user   models.User
 		groups [][]string
 		userId string
 	)
@@ -101,7 +135,7 @@ func UserInfoById(c *gin.Context) {
 func CreateUser(c *gin.Context) {
 	var (
 		err       error
-		user      models.User
+		user      models.UserRequest
 		userCount int64
 		password  []byte
 		groups    [][]string

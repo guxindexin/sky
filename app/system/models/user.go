@@ -21,3 +21,8 @@ type User struct {
 func (User) TableName() string {
 	return "system_user"
 }
+
+type UserRequest struct {
+	User
+	Password string `json:"password"`
+}

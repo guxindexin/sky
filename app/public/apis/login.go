@@ -16,7 +16,7 @@ func Login(c *gin.Context) {
 	var (
 		err       error
 		token     string
-		user      models.User
+		user      models.UserRequest
 		loginUser struct {
 			Username string `json:"username"`
 			Password string `json:"password"`

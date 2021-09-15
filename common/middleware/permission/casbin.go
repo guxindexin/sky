@@ -1,17 +1,16 @@
 package permission
 
 import (
+	"fmt"
 	"sky/pkg/conn"
 	"sky/pkg/logger"
 	"sky/pkg/tools/response"
 	"time"
 
-	"github.com/gin-gonic/gin"
-
-	"github.com/spf13/viper"
-
 	"github.com/casbin/casbin/v2"
 	gormAdapter "github.com/casbin/gorm-adapter/v3"
+	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 )
 
 var Enforcer *casbin.SyncedEnforcer
@@ -62,7 +61,7 @@ func CheckPermMiddleware() gin.HandlerFunc {
 			if ok, _ := Enforcer.Enforce(sub, obj, act); ok {
 				c.Next()
 			} else {
-				response.Error(c, nil, response.NoPermissionError)
+				response.Error(c, fmt.Errorf("暂无权限通过 %s 方式访问 %s ", act, obj), response.NoPermissionError)
 				c.Abort()
 			}
 		}
